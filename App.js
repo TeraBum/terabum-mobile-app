@@ -1,14 +1,12 @@
-import React from 'react';
-import {View, Text} from 'react-native';
-import HomePage from './src/components/pages/HomePage'
+import React from "react";
+import { PaperProvider } from "react-native-paper";
+import { terabumTheme } from "./src/theme/terabumTheme";
+import Home from "./src/screens/Home";
 
-const App = () => {
-  
+export default function App() {
   return (
-
-    <HomePage/>
-  )
-
+    <PaperProvider theme={terabumTheme}>
+      <Home />
+    </PaperProvider>
+  );
 }
-
-export default App

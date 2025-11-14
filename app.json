@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/Prompt-Regular.ttf", "./assets/fonts/Prompt-Bold.ttf"]
+        }
+      ]
+    ]
+  }
+}
