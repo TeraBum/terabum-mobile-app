@@ -1,7 +1,7 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserService } from "../services/UserService";
+import { UserService } from "../services/userService";
 
 export const AuthContext = createContext(null);
 
