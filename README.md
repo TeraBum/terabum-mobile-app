@@ -1,5 +1,6 @@
 # Estrutura de Arquivos
 
+```
 terabum-mobile-app/
 ├── src/
 │   ├── navigation/
@@ -49,6 +50,7 @@ terabum-mobile-app/
 ├── package.json                  <- dependências do app
 ├── README.md                     <- documentação do projeto
 └── tsconfig.json                 <- configuração TypeScript
+```
 
 Desenvolvimento no Expo - Snack:
 https://snack.expo.dev/@daniassis/github.com-terabum-terabum-mobile-app 
