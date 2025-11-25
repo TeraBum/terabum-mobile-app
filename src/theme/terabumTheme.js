@@ -1,31 +1,16 @@
-import { MD3LightTheme } from "react-native-paper";
+import { DefaultTheme } from "react-native-paper";
 
 export const terabumTheme = {
-  ...MD3LightTheme,
+  ...DefaultTheme,
   roundness: 10,
   colors: {
-    ...MD3LightTheme.colors,
-
+    ...DefaultTheme.colors,
     primary: "#24dbc5",
     secondary: "#e8eef5",
-    text: "#000000",
-
     background: "#ffffff",
     surface: "#ffffff",
-
+    text: "#000000",
     onPrimary: "#ffffff",
     onSecondary: "#000000",
-  },
-
-  fonts: {
-    regular: {
-      fontFamily: "Prompt",
-    },
-    medium: {
-      fontFamily: "Prompt",
-    },
-    bold: {
-      fontFamily: "PromptBold",
-    },
   },
 };
