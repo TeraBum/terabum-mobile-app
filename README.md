@@ -8,7 +8,7 @@ terabum-mobile-app/
 │   │   └── tabs.tsx              <- bottom tab navigation (Home, Buscar, Carrinho)
 │   │
 │   ├── theme/
-│   │   └── theme.ts              <- tema global do React Native Paper (cores TeraBum)
+│   │   └── terabumTheme.js              <- tema global do React Native Paper (cores TeraBum)
 │   │
 │   ├── components/
 │   │   ├── Header.tsx            <- cabeçalho global com identidade visual
@@ -35,8 +35,13 @@ terabum-mobile-app/
 │   │   ├── productService.ts     <- CRUD de produtos
 │   │   ├── warehouseService.ts   <- CRUD de galpões
 │   │   ├── cartService.ts        <- carrinho e checkout
+│   │   ├── orderService.ts        
 │   │   └── paymentService.ts     <- pagamentos e status
 │   │
+│   ├── routes/
+│   │   ├── index.tsx            
+│   │   └── tabs.tsx
+│   │    
 │   ├── types/
 │   │   ├── models.ts             <- interfaces (User, Product, StockItem, Cart, Order, etc.)
 │   │   └── api.ts                <- tipos para erros, respostas, requisições
