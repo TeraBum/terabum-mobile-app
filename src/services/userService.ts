@@ -1,30 +1,35 @@
-import api from "./api";
-import {
-  RegisterRequest,
-  LoginRequest,
-  LoginResponse,
-  User,
-} from "../types/models";
+// src/services/userService.ts
+import axios from "axios";
 
-export const UserService = {
-  register: (data: RegisterRequest) =>
-    api.post<User>("/api/v1/Users/register", data),
+const API_URL = "https://seu-backend.com/api"; // 🔥 Troque pelo seu endpoint real
 
-  login: (data: LoginRequest) =>
-    api.post<LoginResponse>("/api/v1/Users/login", data),
+class UserServiceClass {
+  private api;
 
-  listAll: () =>
-    api.get<User[]>("/api/v1/Users"),
+  constructor() {
+    this.api = axios.create({
+      baseURL: API_URL,
+    });
+  }
 
-  getProfile: (id: string) =>
-    api.get<User>(`/api/v1/Users/${id}`),
+  // Define ou remove o token nos headers
+  setToken(token: string | null) {
+    if (token) {
+      this.api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete this.api.defaults.headers.common["Authorization"];
+    }
+  }
 
-  updateOwnData: (id: string, data: Partial<User>) =>
-    api.put<User>(`/api/v1/Users/${id}`, data),
+  // Login
+  async login(credentials: { email: string; password: string }) {
+    return this.api.post("/auth/login", credentials);
+  }
 
-  changeRole: (id: string, role: string) =>
-    api.put(`/api/v1/Users/${id}/role`, { role }),
+  // Carrega dados do usuário logado
+  async getProfile() {
+    return this.api.get("/auth/me");
+  }
+}
 
-  deleteAccount: (id: string) =>
-    api.delete(`/api/v1/Users/${id}`),
-};
+export const UserService = new UserServiceClass();
