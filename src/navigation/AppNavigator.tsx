@@ -1,23 +1,31 @@
-import React from "react";
+import React, { useContext } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-import Tabs from "./tabs";
-import ProductDetails from "../screens/ProductDetails";
+import Tabs from "./Tabs";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
+import { AuthContext } from "../context/AuthContext";
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return null; // ou um SplashScreen
+  }
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* Tela inicial é Tabs (Home é a primeira aba) */}
-      <Stack.Screen name="Tabs" component={Tabs} />
-
-      {/* Outras telas */}
-      <Stack.Screen name="ProductDetails" component={ProductDetails} />
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Register" component={Register} />
+      {user ? (
+        // Usuário logado → mostra o app
+        <Stack.Screen name="App" component={Tabs} />
+      ) : (
+        // Usuário não logado → auth flow
+        <>
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Register" component={Register} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }

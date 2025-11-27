@@ -1,54 +1,53 @@
-import React, { useState } from "react";
-import { View } from "react-native";
-import { TextInput, Button, Text, HelperText } from "react-native-paper";
+import React, { useState, useContext } from "react";
+import { View, TouchableOpacity } from "react-native";
+import { Text, TextInput, Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
   const navigation = useNavigation();
+  const { login } = useContext(AuthContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const hasEmailError = email.length > 0 && !email.includes("@");
-
-  function handleLogin() {
-    // futura integração com sua API
-    console.log("Login:", email, password);
-  }
+  const handleLogin = async () => {
+    const res = await login({ email, password });
+    if (!res.success) alert(res.message);
+  };
 
   return (
-    <View style={{ flex: 1, padding: 20, justifyContent: "center" }}>
-      <Text variant="headlineMedium" style={{ marginBottom: 20, textAlign: "center" }}>
-        Entrar
-      </Text>
+    <View style={{ flex: 1, padding: 24, justifyContent: "center" }}>
+      <Text variant="headlineMedium" style={{ marginBottom: 20 }}>Login</Text>
 
       <TextInput
         label="Email"
-        mode="outlined"
         value={email}
         onChangeText={setEmail}
-        error={hasEmailError}
-        style={{ marginBottom: 10 }}
+        autoCapitalize="none"
+        keyboardType="email-address"
+        mode="outlined"
+        style={{ marginBottom: 12 }}
       />
-      {hasEmailError && (
-        <HelperText type="error">Digite um e-mail válido.</HelperText>
-      )}
 
       <TextInput
         label="Senha"
-        mode="outlined"
-        secureTextEntry
         value={password}
         onChangeText={setPassword}
+        secureTextEntry
+        mode="outlined"
         style={{ marginBottom: 20 }}
       />
 
-      <Button mode="contained" onPress={handleLogin} style={{ marginBottom: 10 }}>
+      <Button mode="contained" onPress={handleLogin} style={{ paddingVertical: 6 }}>
         Entrar
       </Button>
 
-      <Button mode="text" onPress={() => navigation.navigate("Register")}>
-        Criar conta
-      </Button>
+      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+        <Text style={{ textAlign: "center", marginTop: 20, color: "#6200ee" }}>
+          Não possui conta? Registrar
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }

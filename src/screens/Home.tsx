@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, ScrollView, Image } from "react-native";
 import { Text, Button, Searchbar, Chip, Card, Avatar } from "react-native-paper";
 import { useTheme } from "react-native-paper";
+import { AuthContext } from "../context/AuthContext";
 
-export default function Home({ navigation }) {
+export default function Home() {
   const theme = useTheme();
+  const { user, logout } = useContext(AuthContext);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [categoria, setCategoria] = useState("Periféricos");
 
@@ -34,18 +37,17 @@ export default function Home({ navigation }) {
           <Text variant="titleLarge" style={{ fontFamily: "PromptBold", lineHeight: 18 }}>Tera{"\n"}Bum</Text>
         </View>
 
-        <Avatar.Image size={46} source={{ uri: "https://i.pravatar.cc/300?img=12" }} />
+        <Avatar.Image size={46} source={{ uri: user?.avatar }} />
       </View>
 
       {/* SAUDAÇÃO */}
-      <Text variant="bodyLarge" style={{ marginTop: 24 }}>Olá, Andrea</Text>
+      <Text variant="bodyLarge" style={{ marginTop: 24 }}>Olá, {user?.name}</Text>
       <Text variant="headlineMedium" style={{ fontFamily: "PromptBold" }}>O que você busca hoje?</Text>
 
-      {/* BOTÕES LOGIN / REGISTRO */}
-      <View style={{ flexDirection: "row", marginTop: 16, gap: 12 }}>
-        <Button mode="outlined" onPress={() => navigation.navigate("Login")}>Login</Button>
-        <Button mode="contained" onPress={() => navigation.navigate("Register")}>Registrar</Button>
-      </View>
+      {/* LOGOUT */}
+      <Button mode="outlined" onPress={logout} style={{ marginTop: 16 }}>
+        Sair
+      </Button>
 
       {/* SEARCH */}
       <Searchbar
