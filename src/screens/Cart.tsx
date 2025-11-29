@@ -1,21 +1,54 @@
-import React from "react";
-import { View, Text, Button } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View } from "react-native";
+import { Text, Button, Card } from "react-native-paper";
 import Layout from "../components/Layout";
+import {cartService} from "../services/cartService";
 
-const Cart = () => {
+export default function Cart({ navigation }) {
+  const [cart, setCart] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadCart();
+  }, []);
+
+  async function loadCart() {
+    try {
+      const response = await cartService.getCart();
+      setCart(response.items || []);
+    } catch (err) {
+      console.log(err);
+    }
+    setLoading(false);
+  }
+
+  const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
+
   return (
-    <Layout>
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 20 }}>
-          Carrinho
-        </Text>
+    <Layout navigation={navigation}>
+      <Text variant="headlineSmall" style={{ marginBottom: 16 }}>
+        Seu Carrinho
+      </Text>
 
-        <Text>Seu carrinho está vazio (mock).</Text>
+      {cart.map((item) => (
+        <Card key={item.id} style={{ marginBottom: 10 }}>
+          <Card.Title title={item.name} subtitle={`Qtd: ${item.qty}`} />
+          <Card.Content>
+            <Text>R$ {item.price}</Text>
+          </Card.Content>
+        </Card>
+      ))}
 
-        <Button title="Finalizar Compra" onPress={() => console.log("Checkout")} />
-      </View>
+      <Text variant="titleMedium" style={{ marginVertical: 16 }}>
+        Total: R$ {total.toFixed(2)}
+      </Text>
+
+      <Button
+        mode="contained"
+        onPress={() => navigation.navigate("Payment")}
+      >
+        Finalizar Compra
+      </Button>
     </Layout>
   );
-};
-
-export default Cart;
+}

@@ -1,19 +1,28 @@
 import api from "./api";
-import { Cart } from "../types/models";
 
-export const CartService = {
-  createCart: () =>
-    api.post<Cart>("/api/v1/cart"),
+export const cartService = {
+  createCart: async () => {
+    const res = await api.post("/api/v1/cart");
+    return res.data;
+  },
 
-  getCart: () =>
-    api.get<Cart>("/api/v1/cart"),
+  getCart: async () => {
+    const res = await api.get("/api/v1/cart");
+    return res.data;
+  },
 
-  updateItems: (items: any[]) =>
-    api.patch<Cart>("/api/v1/cart/cart-items", { items }),
+  updateItems: async (items: any[]) => {
+    const res = await api.patch("/api/v1/cart/cart-items", { items });
+    return res.data;
+  },
 
-  cancelCart: () =>
-    api.patch("/api/v1/cart/cancel", {}),
+  cancelCart: async () => {
+    const res = await api.patch("/api/v1/cart/cancel");
+    return res.data;
+  },
 
-  checkout: () =>
-    api.post("/api/v1/cart/checkout", {}),
+  checkout: async () => {
+    const res = await api.post("/api/v1/cart/checkout");
+    return res.data;
+  },
 };

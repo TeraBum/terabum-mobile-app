@@ -1,37 +1,48 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import React, { useState, useContext } from "react";
+import { Text, TextInput, Button } from "react-native-paper";
 import Layout from "../components/Layout";
+import { AuthContext } from "../context/AuthContext";
 
-const Login = () => {
+export default function Login({ navigation }) {
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  async function handleLogin() {
+  try {
+    await login({ email, password });
+  } catch (e) {
+    console.log("Falha no login", e);
+  }
+  }
+
   return (
-    <Layout>
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 20 }}>
-          Login
-        </Text>
+    <Layout navigation={navigation}>
+      <Text variant="headlineSmall">Entrar</Text>
 
-        <TextInput
-          style={{ borderWidth: 1, padding: 10, marginBottom: 15 }}
-          placeholder="E-mail"
-          value={email}
-          onChangeText={setEmail}
-        />
+      <TextInput
+        label="Email"
+        value={email}
+        onChangeText={setEmail}
+        style={{ marginTop: 20 }}
+      />
 
-        <TextInput
-          style={{ borderWidth: 1, padding: 10, marginBottom: 15 }}
-          placeholder="Senha"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+      <TextInput
+        label="Senha"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+        style={{ marginTop: 10 }}
+      />
 
-        <Button title="Entrar" onPress={() => console.log("Login")} />
-      </View>
+      <Button mode="contained" onPress={handleLogin} style={{ marginTop: 20 }}>
+        Login
+      </Button>
+
+      <Button onPress={() => navigation.navigate("Register")} style={{ marginTop: 10 }}>
+        Criar conta
+      </Button>
     </Layout>
   );
-};
+}
 
-export default Login;

@@ -1,13 +1,28 @@
-import { api } from "./api";
+import api from "./api";
 
-export const WarehouseService = {
-  create: (data) => api.post("/warehouse", data),
+export const warehouseService = {
+  list: async () => {
+    const res = await api.get("/api/v1/warehouse");
+    return res.data;
+  },
 
-  list: () => api.get("/warehouse"),
+  get: async (id: string) => {
+    const res = await api.get(`/api/v1/warehouse/${id}`);
+    return res.data;
+  },
 
-  get: (id) => api.get(`/warehouse/${id}`),
+  create: async (payload: any) => {
+    const res = await api.post("/api/v1/warehouse", payload);
+    return res.data;
+  },
 
-  update: (id, data) => api.put(`/warehouse/${id}`, data),
+  update: async (id: string, payload: any) => {
+    const res = await api.put(`/api/v1/warehouse/${id}`, payload);
+    return res.data;
+  },
 
-  delete: (id) => api.delete(`/warehouse/${id}`),
+  delete: async (id: string) => {
+    const res = await api.delete(`/api/v1/warehouse/${id}`);
+    return res.data;
+  },
 };

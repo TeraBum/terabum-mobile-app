@@ -1,28 +1,46 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import { Text, TextInput, Button } from "react-native-paper";
 import Layout from "../components/Layout";
+import {userService} from "../services/userService";
 
-const Register = () => {
-  const [name, setName] = useState("");
+export default function Register({ navigation }) {
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+
+  async function handleRegister() {
+    await userService.register(form.name, form.email, form.password);
+    navigation.navigate("Login");
+  }
 
   return (
-    <Layout>
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 20 }}>
-          Criar Conta
-        </Text>
+    <Layout navigation={navigation}>
+      <Text variant="headlineSmall">Criar Conta</Text>
 
-        <TextInput
-          style={{ borderWidth: 1, padding: 10, marginBottom: 15 }}
-          placeholder="Seu nome"
-          value={name}
-          onChangeText={setName}
-        />
+      <TextInput
+        label="Nome"
+        value={form.name}
+        onChangeText={(v) => setForm({ ...form, name: v })}
+        style={{ marginTop: 20 }}
+      />
 
-        <Button title="Cadastrar" onPress={() => console.log("Registrar")} />
-      </View>
+      <TextInput
+        label="Email"
+        value={form.email}
+        onChangeText={(v) => setForm({ ...form, email: v })}
+        style={{ marginTop: 10 }}
+      />
+
+      <TextInput
+        label="Senha"
+        secureTextEntry
+        value={form.password}
+        onChangeText={(v) => setForm({ ...form, password: v })}
+        style={{ marginTop: 10 }}
+      />
+
+      <Button mode="contained" style={{ marginTop: 20 }} onPress={handleRegister}>
+        Registrar
+      </Button>
     </Layout>
   );
-};
+}
 
-export default Register;

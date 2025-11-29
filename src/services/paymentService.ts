@@ -1,16 +1,23 @@
 import api from "./api";
-import { Payment } from "../types/models";
 
-export const PaymentService = {
-  createPayment: (orderId: string) =>
-    api.post<Payment>("/api/v1/payments", { orderId }),
+export const paymentService = {
+  createPayment: async (payload: any) => {
+    const res = await api.post("/api/v1/payments", payload);
+    return res.data;
+  },
 
-  getPaymentByOrder: (orderId: string) =>
-    api.get<Payment>(`/api/v1/payments/${orderId}`),
+  getPaymentByOrder: async (orderId: string) => {
+    const res = await api.get(`/api/v1/payments/${orderId}`);
+    return res.data;
+  },
 
-  updatePaymentStatus: (paymentId: string, status: string) =>
-    api.patch(`/api/v1/payments/${paymentId}`, { status }),
+  updatePaymentStatus: async (paymentId: string, status: string) => {
+    const res = await api.patch(`/api/v1/payments/${paymentId}`, { status });
+    return res.data;
+  },
 
-  cancelPayment: (paymentId: string) =>
-    api.delete(`/api/v1/payments/${paymentId}`),
+  cancelPayment: async (paymentId: string) => {
+    const res = await api.delete(`/api/v1/payments/${paymentId}`);
+    return res.data;
+  },
 };

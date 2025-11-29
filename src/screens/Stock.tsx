@@ -1,33 +1,32 @@
-import React from "react";
-import { View, Text, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, Card } from "react-native-paper";
 import Layout from "../components/Layout";
+import {estoqueService} from "../services/estoqueService";
 
-const Stock = () => {
-  const mockStock = [
-    { id: "1", name: "Produto A", qty: 12 },
-    { id: "2", name: "Produto B", qty: 5 },
-  ];
+export default function Stock({ navigation }) {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  async function load() {
+    const data = await estoqueService.listStock();
+    setItems(data);
+  }
 
   return (
-    <Layout>
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 20 }}>
-          Estoque
-        </Text>
+    <Layout navigation={navigation}>
+      <Text variant="headlineSmall" style={{ marginBottom: 16 }}>
+        Estoque Interno
+      </Text>
 
-        <FlatList
-          data={mockStock}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={{ padding: 10, borderBottomWidth: 1 }}>
-              <Text>{item.name}</Text>
-              <Text>Quantidade: {item.qty}</Text>
-            </View>
-          )}
-        />
-      </View>
+      {items.map((i: any) => (
+        <Card key={i.id} style={{ marginBottom: 10 }}>
+          <Card.Title title={i.name} subtitle={`Qtd: ${i.quantity}`} />
+        </Card>
+      ))}
     </Layout>
   );
-};
+}
 
-export default Stock;

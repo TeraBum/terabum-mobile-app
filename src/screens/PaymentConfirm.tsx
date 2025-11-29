@@ -1,19 +1,22 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { Text, Button } from "react-native-paper";
 import Layout from "../components/Layout";
 
-const PaymentConfirm = () => {
+export default function PaymentConfirm({ navigation }) {
   return (
-    <Layout>
-      <View style={{ padding: 20, alignItems: "center" }}>
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 20 }}>
-          Pagamento Confirmado!
-        </Text>
+    <Layout navigation={navigation}>
+      <Text variant="headlineSmall" style={{ marginBottom: 16 }}>
+        Pedido Confirmado! 🎉
+      </Text>
 
-        <Text>Obrigado pela sua compra.</Text>
-      </View>
+      <Text style={{ marginBottom: 24 }}>
+        Seu pagamento foi processado com sucesso.
+      </Text>
+
+      <Button mode="contained" onPress={() => navigation.navigate("Home")}>
+        Voltar para Home
+      </Button>
     </Layout>
   );
-};
+}
 
-export default PaymentConfirm;

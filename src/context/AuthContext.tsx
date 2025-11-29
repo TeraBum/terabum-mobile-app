@@ -1,82 +1,92 @@
-// src/context/AuthContext.tsx
 import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserService } from "../services/userService";
+import { userService } from "../services/userService";
 
-interface AuthContextType {
-  user: any;
-  loading: boolean;
-  login: (credentials: any) => Promise<void>;
-  logout: () => Promise<void>;
+// Tipo do usuário
+interface User {
+id: string;
+name: string;
+email: string;
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+// Tipo do contexto
+interface AuthContextType {
+user: User | null;
+loading: boolean;
+login: (credentials: { email: string; password: string }) => Promise;
+register: (user: { name: string; email: string; password: string }) => Promise;
+logout: () => Promise;
+}
+
+export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+const [user, setUser] = useState<User | null>(null);
+const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadUser();
-  }, []);
+useEffect(() => {
+loadUser();
+}, []);
 
-  // Carrega usuário ao abrir o app
-  async function loadUser() {
-    try {
-      const token = await AsyncStorage.getItem("token");
+// Carregar usuário logado
+async function loadUser() {
+try {
+const token = await AsyncStorage.getItem("token");
 
-      if (token) {
-        // Seta o token no axios
-        UserService.setToken(token);
+  if (token) {
+    userService.setToken(token);
 
-        const { data } = await UserService.getProfile();
-        setUser(data);
-      }
-    } catch (error) {
-      console.log("Erro ao carregar usuário:", error);
-    }
+    const { data } = await userService.getProfile();
 
-    setLoading(false);
+    setUser({
+      id: data.id,
+      name: data.name,
+      email: data.email,
+    });
   }
-
-  // Faz login
-  async function login(credentials: any) {
-    try {
-      const { data } = await UserService.login(credentials);
-
-      // Salva token
-      await AsyncStorage.setItem("token", data.token);
-
-      // Atualiza axios
-      UserService.setToken(data.token);
-
-      // Salva usuário logado
-      setUser(data.user);
-    } catch (error) {
-      console.log("Erro no login:", error);
-      throw error;
-    }
-  }
-
-  // Faz logout
-  async function logout() {
-    try {
-      await AsyncStorage.removeItem("token");
-      UserService.setToken(null);
-      setUser(null);
-    } catch (error) {
-      console.log("Erro ao fazer logout:", error);
-    }
-  }
-
-  return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+} catch (err) {
+  console.log("Erro ao carregar usuário:", err);
 }
 
-// Hook para usar auth facilmente
+setLoading(false);
+
+}
+
+// LOGIN
+async function login(credentials: { email: string; password: string }) {
+const { data } = await userService.login(credentials);
+
+await AsyncStorage.setItem("token", data.token);
+userService.setToken(data.token);
+
+setUser({
+  id: data.user.id,
+  name: data.user.name,
+  email: data.user.email,
+});
+
+}
+
+// REGISTER
+async function register(userForm: { name: string; email: string; password: string }) {
+await userService.register(userForm);
+}
+
+// LOGOUT
+async function logout() {
+await AsyncStorage.removeItem("token");
+userService.setToken(null);
+setUser(null);
+}
+
+return (
+<AuthContext.Provider value={{ user, loading, login, register, logout }}>
+{children}
+</AuthContext.Provider>
+);
+}
+
+// Hook de acesso
 export function useAuth() {
-  return useContext(AuthContext);
+return useContext(AuthContext);
 }

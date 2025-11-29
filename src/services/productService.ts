@@ -1,19 +1,29 @@
 import api from "./api";
 import { Product } from "../types/models";
 
-export const ProductService = {
-  create: (data: Product) =>
-    api.post<Product>("/api/v1/product", data),
+export const productService = {
+  list: async () => {
+    const res = await api.get<Product[]>("/api/v1/product");
+    return res.data;
+  },
 
-  list: () =>
-    api.get<Product[]>("/api/v1/product"),
+  get: async (id: string) => {
+    const res = await api.get<Product>(`/api/v1/product/${id}`);
+    return res.data;
+  },
 
-  get: (id: string) =>
-    api.get<Product>(`/api/v1/product/${id}`),
+  create: async (payload: Partial<Product>) => {
+    const res = await api.post("/api/v1/product", payload);
+    return res.data;
+  },
 
-  update: (id: string, data: Partial<Product>) =>
-    api.put<Product>(`/api/v1/product/${id}`, data),
+  update: async (id: string, payload: Partial<Product>) => {
+    const res = await api.put(`/api/v1/product/${id}`, payload);
+    return res.data;
+  },
 
-  delete: (id: string) =>
-    api.delete(`/api/v1/product/${id}`),
+  delete: async (id: string) => {
+    const res = await api.delete(`/api/v1/product/${id}`);
+    return res.data;
+  },
 };

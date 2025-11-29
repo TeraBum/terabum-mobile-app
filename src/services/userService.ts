@@ -1,35 +1,33 @@
-// src/services/userService.ts
-import axios from "axios";
+import api from "./api";
+import { User } from "../types/models";
 
-const API_URL = "https://seu-backend.com/api"; // 🔥 Troque pelo seu endpoint real
+export const userService = {
+  login: async (email: string, password: string) => {
+    const res = await api.post("/api/v1/Users/login", { email, password });
+    return res.data;
+  },
 
-class UserServiceClass {
-  private api;
-
-  constructor() {
-    this.api = axios.create({
-      baseURL: API_URL,
+  register: async (name: string, email: string, password: string) => {
+    const res = await api.post("/api/v1/Users/register", {
+      name,
+      email,
+      password,
     });
-  }
+    return res.data;
+  },
 
-  // Define ou remove o token nos headers
-  setToken(token: string | null) {
-    if (token) {
-      this.api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    } else {
-      delete this.api.defaults.headers.common["Authorization"];
-    }
-  }
+  getProfile: async (id: string) => {
+    const res = await api.get<User>(`/api/v1/Users/${id}`);
+    return res.data;
+  },
 
-  // Login
-  async login(credentials: { email: string; password: string }) {
-    return this.api.post("/auth/login", credentials);
-  }
+  updateProfile: async (id: string, payload: Partial<User>) => {
+    const res = await api.put(`/api/v1/Users/${id}`, payload);
+    return res.data;
+  },
 
-  // Carrega dados do usuário logado
-  async getProfile() {
-    return this.api.get("/auth/me");
-  }
-}
-
-export const UserService = new UserServiceClass();
+  deleteUser: async (id: string) => {
+    const res = await api.delete(`/api/v1/Users/${id}`);
+    return res.data;
+  },
+};

@@ -1,11 +1,18 @@
-import { api } from "./api";
+import api from "./api";
 
-export const OrderService = {
-  createPayment: (data) => api.post("/payments", data),
+export const orderService = {
+  createOrder: async (payload: any) => {
+    const res = await api.post("/api/v1/order", payload);
+    return res.data;
+  },
 
-  getPayment: (orderId) => api.get(`/payments/${orderId}`),
+  getOrders: async () => {
+    const res = await api.get("/api/v1/order");
+    return res.data;
+  },
 
-  updatePayment: (id, data) => api.patch(`/payments/${id}`, data),
-
-  cancelPayment: (id) => api.delete(`/payments/${id}`),
+  getOrderById: async (id: string) => {
+    const res = await api.get(`/api/v1/order/${id}`);
+    return res.data;
+  },
 };

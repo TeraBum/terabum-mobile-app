@@ -1,13 +1,19 @@
 import api from "./api";
-import { Product, StockItem } from "../types/models";
+import { Product } from "../types/models";
 
-export const VitrineService = {
-  listProducts: () =>
-    api.get<Product[]>("/api/v1/vitrine/Product"),
+export const vitrineService = {
+  getProducts: async () => {
+    const res = await api.get<Product[]>("/api/v1/vitrine/Product");
+    return res.data;
+  },
 
-  getProductDetails: (id: string) =>
-    api.get<Product>(`/api/v1/vitrine/Product/${id}`),
+  getProductById: async (id: string) => {
+    const res = await api.get<Product>(`/api/v1/vitrine/Product/${id}`);
+    return res.data;
+  },
 
-  getStockForProduct: (id: string) =>
-    api.get<StockItem>(`/api/v1/vitrine/Product/${id}/stock`),
+  getProductStock: async (id: string) => {
+    const res = await api.get(`/api/v1/vitrine/Product/${id}/stock`);
+    return res.data;
+  },
 };
