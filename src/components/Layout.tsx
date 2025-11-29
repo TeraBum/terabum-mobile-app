@@ -1,20 +1,18 @@
-// src/components/Layout.tsx
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import Header from "./Header";
 import Footer from "./Footer";
 
-export default function Layout({ children }) {
+export default function Layout({ children, navigation }) {
   return (
-    <View style={styles.container}>
-      <Header />
-      <View style={styles.content}>{children}</View>
-      <Footer />
+    <View style={{ flex: 1 }}>
+      <Header navigation={navigation} />
+
+      <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 20 }}>
+        {children}
+      </View>
+
+      <Footer navigation={navigation} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  content: { flex: 1, padding: 16 },
-});

@@ -1,33 +1,51 @@
 import React from "react";
 import { View, Image } from "react-native";
-import { Text, Button, Card } from "react-native-paper";
+import { Text, Card } from "react-native-paper";
+import Layout from "../components/Layout";
+import TeraButton from "../components/TeraButton";
 
-export default function ProductDetails({ route }) {
+export default function ProductDetails({ route, navigation }) {
   const { product } = route.params;
 
   return (
-    <View style={{ flex: 1, padding: 16, gap: 16 }}>
-      <Card>
+    <Layout navigation={navigation}>
+      <Card style={{ borderRadius: 16 }}>
         <Card.Cover
-          source={{ uri: "https://via.placeholder.com/300" }}
-          style={{ height: 200 }}
+          source={{ uri: product.image || "https://via.placeholder.com/300" }}
+          style={{ height: 220, borderRadius: 16 }}
         />
       </Card>
 
-      <Text variant="headlineMedium">{product.name}</Text>
-      <Text variant="titleMedium">R$ {product.price.toFixed(2)}</Text>
-
-      <Text variant="bodyMedium" style={{ marginTop: 10 }}>
-        Aqui vai a descrição do produto. Você pode substituir por dados reais.
+      <Text
+        variant="headlineMedium"
+        style={{ fontFamily: "PromptBold", marginTop: 16 }}
+      >
+        {product.name}
       </Text>
 
-      <Button
-        mode="contained"
-        style={{ marginTop: 20 }}
+      <Text
+        variant="titleMedium"
+        style={{
+          marginTop: 6,
+          fontFamily: "Prompt",
+          color: "#24dbc5",
+        }}
+      >
+        R$ {product.price.toFixed(2)}
+      </Text>
+
+      <Text style={{ marginTop: 16, opacity: 0.8 }}>
+        Aqui vai uma descrição real do produto. Substitua pelos dados do seu
+        backend futuramente.
+      </Text>
+
+      <TeraButton
+        style={{ marginTop: 24 }}
         onPress={() => console.log("Adicionar ao carrinho")}
       >
         Adicionar ao Carrinho
-      </Button>
-    </View>
+      </TeraButton>
+    </Layout>
   );
 }
+

@@ -1,29 +1,42 @@
-// src/components/Footer.tsx
 import React, { useState } from "react";
 import { BottomNavigation } from "react-native-paper";
 
-export default function Footer() {
+export default function Footer({ navigation }) {
   const [index, setIndex] = useState(0);
 
   const routes = [
-    { key: "home", title: "Início", icon: "home" },
-    { key: "products", title: "Produtos", icon: "magnify" },
-    { key: "cart", title: "Carrinho", icon: "cart" },
-    { key: "profile", title: "Perfil", icon: "account" },
+    { key: "home", title: "Início", icon: "home-outline" },
+    { key: "search", title: "Buscar", icon: "magnify" },
+    { key: "cart", title: "Carrinho", icon: "cart-outline" },
+    { key: "account", title: "Conta", icon: "account-outline" },
   ];
 
   const renderScene = BottomNavigation.SceneMap({
     home: () => null,
-    products: () => null,
+    search: () => null,
     cart: () => null,
-    profile: () => null,
+    account: () => null,
   });
+
+  const handleNavigate = (newIndex) => {
+    setIndex(newIndex);
+
+    const selected = routes[newIndex].key;
+
+    if (selected === "home") navigation.navigate("Home");
+    if (selected === "search") navigation.navigate("SearchProducts");
+    if (selected === "cart") navigation.navigate("Cart");
+    if (selected === "account") navigation.navigate("Profile");
+  };
 
   return (
     <BottomNavigation
       navigationState={{ index, routes }}
-      onIndexChange={setIndex}
+      onIndexChange={handleNavigate}
       renderScene={renderScene}
+      shifting={false}
+      labeled
     />
   );
 }
+
