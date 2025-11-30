@@ -23,6 +23,7 @@ export default function App() {
     <PaperProvider theme={terabumTheme}>
       <NavigationContainer>
         <Stack.Navigator
+        id="app"
           screenOptions={{
             headerShown: false,
             animation: "slide_from_right",

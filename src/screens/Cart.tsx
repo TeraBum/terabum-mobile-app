@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import { Text, Button, Card } from "react-native-paper";
 import Layout from "../components/Layout";
 import {cartService} from "../services/cartService";
@@ -10,6 +10,69 @@ export default function Cart({ navigation }) {
 
   useEffect(() => {
     loadCart();
+    setCart([
+      {
+        id: 1,
+        name: "nome",
+      acc: "123",
+      price: 154,
+      qty: 5,
+    },
+      {
+        id: 2,
+      acc: "123",
+      price: 154,
+      qty: 5,
+    },
+      {
+        id: 3,
+      acc: "123",
+      price: 154,
+      qty: 5,
+    },
+      {
+        id: 4,
+      acc: "123",
+      price: 154,
+      qty: 5,
+    },
+      {
+        id: 5,
+      acc: "123",
+      price: 154,
+      qty: 5,
+    },
+      {
+        id: 6,
+      acc: "123",
+      price: 154,
+      qty: 5,
+    },
+      {
+        id: 7,
+      acc: "123",
+      price: 154,
+      qty: 5,
+    },
+      {
+        id: 8,
+      acc: "123",
+      price: 154,
+      qty: 5,
+    },
+      {
+        id: 9,
+      acc: "123",
+      price: 154,
+      qty: 5,
+    },
+      {
+        id: 10,
+      acc: "123",
+      price: 154,
+      qty: 5,
+    },
+  ])
   }, []);
 
   async function loadCart() {
@@ -26,6 +89,7 @@ export default function Cart({ navigation }) {
 
   return (
     <Layout navigation={navigation}>
+      <ScrollView>
       <Text variant="headlineSmall" style={{ marginBottom: 16 }}>
         Seu Carrinho
       </Text>
@@ -49,6 +113,7 @@ export default function Cart({ navigation }) {
       >
         Finalizar Compra
       </Button>
+      </ScrollView>
     </Layout>
   );
 }

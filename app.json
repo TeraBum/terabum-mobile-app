@@ -1,5 +1,8 @@
 {
   "expo": {
+    "experiments": {
+      "reactCanary": true
+    },
     "plugins": [
       [
         "expo-font",
