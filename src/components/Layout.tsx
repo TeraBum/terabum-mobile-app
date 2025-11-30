@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import Header from "./Header";
 import Footer from "./Footer";
 
@@ -12,7 +12,9 @@ export default function Layout({ children, navigation }) {
         {children}
       </View>
 
+      {Platform.OS == "web" && (
       <Footer navigation={navigation} />
+      )}
     </View>
   );
 }
