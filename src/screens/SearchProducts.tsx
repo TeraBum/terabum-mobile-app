@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useEffectEvent } from "react";
 import { View, FlatList, Pressable, Dimensions } from "react-native";
 import { TextInput, Card, Text } from "react-native-paper";
 import Layout from "../components/Layout";
+import { productService } from "src/services/productService";
+import { Product } from "src/types/models";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 20 * 2 - 12) / 2;
@@ -15,8 +17,21 @@ const mockProducts = [
 
 export default function SearchProducts({ navigation }) {
   const [search, setSearch] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const filtered = mockProducts.filter((p) =>
+  useEffect(() => {
+    async function getProducts(){
+      console.log("tentando")
+      const data = await productService.list(); 
+      setProducts(data);
+      console.log(data)
+    }
+    getProducts()
+  }, []);
+
+
+
+  const filtered = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 

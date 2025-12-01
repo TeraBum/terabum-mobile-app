@@ -3,8 +3,8 @@ import { Product } from "../types/models";
 
 export const productService = {
   list: async () => {
-    const res = await api.get<Product[]>("/api/v1/product");
-    return res.data;
+    const res = await api.get<{products: Product[]}>("/vitrine/api/v1/vitrine/product?pageSize=100");
+    return res.data.products;
   },
 
   get: async (id: string) => {

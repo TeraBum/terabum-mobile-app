@@ -35,8 +35,7 @@ export default function ProductDetails({ route, navigation }) {
       </Text>
 
       <Text style={{ marginTop: 16, opacity: 0.8 }}>
-        Aqui vai uma descrição real do produto. Substitua pelos dados do seu
-        backend futuramente.
+        {product.description}
       </Text>
 
       <TeraButton
