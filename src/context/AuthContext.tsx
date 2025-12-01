@@ -1,92 +1,184 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Buffer } from "buffer";
 import { userService } from "../services/userService";
+import { User } from "../types/models";
 
-// Tipo do usuário
-interface User {
-id: string;
-name: string;
-email: string;
-}
+const ROLE_CLAIM =
+  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+const TOKEN_STORAGE_KEY = "token";
 
-// Tipo do contexto
+type LoginCredentials = {
+  email: string;
+  password: string;
+};
+
+type RegisterPayload = {
+  name: string;
+  email: string;
+  password: string;
+};
+
 interface AuthContextType {
-user: User | null;
-loading: boolean;
-login: (credentials: { email: string; password: string }) => Promise;
-register: (user: { name: string; email: string; password: string }) => Promise;
-logout: () => Promise;
+  token: string | null;
+  role: string | null;
+  user: User | null;
+  initializing: boolean;
+  loading: boolean;
+  isAdmin: boolean;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  register: (payload: RegisterPayload) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-export const AuthContext = createContext({} as AuthContextType);
+const defaultContext: AuthContextType = {
+  token: null,
+  role: null,
+  user: null,
+  initializing: true,
+  loading: false,
+  isAdmin: false,
+  login: async () => {},
+  register: async () => {},
+  logout: async () => {},
+};
 
-export function AuthProvider({ children }) {
-const [user, setUser] = useState<User | null>(null);
-const [loading, setLoading] = useState(true);
+export const AuthContext = createContext<AuthContextType>(defaultContext);
 
-useEffect(() => {
-loadUser();
-}, []);
-
-// Carregar usuário logado
-async function loadUser() {
-try {
-const token = await AsyncStorage.getItem("token");
-
-  if (token) {
-    userService.setToken(token);
-
-    const { data } = await userService.getProfile();
-
-    setUser({
-      id: data.id,
-      name: data.name,
-      email: data.email,
-    });
+const decodeTokenPayload = (token: string): Record<string, unknown> | null => {
+  try {
+    const parts = token.split(".");
+    if (parts.length < 2) {
+      return null;
+    }
+    const normalized = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padding = (4 - (normalized.length % 4)) % 4;
+    const base64 = normalized + "=".repeat(padding);
+    const decoded = Buffer.from(base64, "base64").toString("utf-8");
+    return JSON.parse(decoded);
+  } catch (err) {
+    console.warn("Falha ao decodificar JWT:", err);
+    return null;
   }
-} catch (err) {
-  console.log("Erro ao carregar usuário:", err);
+};
+
+const extractRoleFromToken = (token: string | null): string | null => {
+  if (!token) {
+    return null;
+  }
+  const payload = decodeTokenPayload(token);
+  if (!payload) {
+    return null;
+  }
+  return (
+    (payload[ROLE_CLAIM] as string | null) ??
+    (payload["role"] as string | null) ??
+    (payload["Role"] as string | null) ??
+    (payload["roles"] as string | null) ??
+    null
+  );
+};
+
+const extractUser = (raw: any): User | null => {
+  if (!raw) {
+    return null;
+  }
+
+  return {
+    id: raw.id ?? raw.userId ?? "",
+    name: raw.name ?? raw.nome ?? "",
+    email: raw.email ?? "",
+    roles: Array.isArray(raw.roles) ? raw.roles : [],
+  };
+};
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [token, setToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [initializing, setInitializing] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadToken = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem(TOKEN_STORAGE_KEY);
+        if (storedToken) {
+          setToken(storedToken);
+          setRole(extractRoleFromToken(storedToken));
+        }
+      } finally {
+        setInitializing(false);
+      }
+    };
+
+    loadToken();
+  }, []);
+
+  const applySession = async (nextToken: string | null, nextUser?: User | null) => {
+    if (nextToken) {
+      await AsyncStorage.setItem(TOKEN_STORAGE_KEY, nextToken);
+      setToken(nextToken);
+      setRole(extractRoleFromToken(nextToken));
+      if (typeof nextUser !== "undefined") {
+        setUser(nextUser);
+      }
+      return;
+    }
+
+    await AsyncStorage.removeItem(TOKEN_STORAGE_KEY);
+    setToken(null);
+    setRole(null);
+    setUser(null);
+  };
+
+  const login = async (credentials: LoginCredentials) => {
+    setLoading(true);
+    try {
+      const data = await userService.login(credentials);
+      const authToken = data?.token;
+      if (!authToken) {
+        throw new Error("Token não recebido. Verifique suas credenciais.");
+      }
+      const nextUser = extractUser(data?.user);
+      await applySession(authToken, nextUser);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (payload: RegisterPayload) => {
+    await userService.register(payload);
+  };
+
+  const logout = async () => {
+    await applySession(null);
+  };
+
+  const value = useMemo(
+    () => ({
+      token,
+      role,
+      user,
+      initializing,
+      loading,
+      isAdmin: role === "Administrador",
+      login,
+      register,
+      logout,
+    }),
+    [token, role, user, initializing, loading]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-setLoading(false);
-
-}
-
-// LOGIN
-async function login(credentials: { email: string; password: string }) {
-const { data } = await userService.login(credentials);
-
-await AsyncStorage.setItem("token", data.token);
-userService.setToken(data.token);
-
-setUser({
-  id: data.user.id,
-  name: data.user.name,
-  email: data.user.email,
-});
-
-}
-
-// REGISTER
-async function register(userForm: { name: string; email: string; password: string }) {
-await userService.register(userForm);
-}
-
-// LOGOUT
-async function logout() {
-await AsyncStorage.removeItem("token");
-userService.setToken(null);
-setUser(null);
-}
-
-return (
-<AuthContext.Provider value={{ user, loading, login, register, logout }}>
-{children}
-</AuthContext.Provider>
-);
-}
-
-// Hook de acesso
 export function useAuth() {
-return useContext(AuthContext);
+  return useContext(AuthContext);
 }

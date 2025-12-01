@@ -17,7 +17,7 @@ export default function AppNavigator() {
   if (loading) return null;
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator id="auth-stack" screenOptions={{ headerShown: false }}>
       {!user ? (
         <>
           <Stack.Screen name="Login" component={Login} />
@@ -37,5 +37,4 @@ export default function AppNavigator() {
     </Stack.Navigator>
   );
 }
-
 

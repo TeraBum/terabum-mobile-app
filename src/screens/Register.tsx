@@ -7,7 +7,7 @@ export default function Register({ navigation }) {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
   async function handleRegister() {
-    await userService.register(form.name, form.email, form.password);
+    await userService.register(form);
     navigation.navigate("Login");
   }
 
@@ -43,4 +43,3 @@ export default function Register({ navigation }) {
     </Layout>
   );
 }
-

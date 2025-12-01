@@ -2,8 +2,11 @@ import React from "react";
 import { View } from "react-native";
 import { Avatar, Text, List } from "react-native-paper";
 import Layout from "../components/Layout";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile({ navigation }) {
+  const { user, logout, isAdmin } = useAuth();
+
   return (
     <Layout navigation={navigation}>
       <View style={{ alignItems: "center", marginTop: 20 }}>
@@ -13,11 +16,11 @@ export default function Profile({ navigation }) {
         />
 
         <Text variant="titleLarge" style={{ marginTop: 12 }}>
-          Andrea Silva
+          {user?.name || "Usuário"}
         </Text>
 
         <Text style={{ opacity: 0.6, marginBottom: 24 }}>
-          Usuária do TeraBum
+          {user?.email || "Conta TeraBum"}
         </Text>
       </View>
 
@@ -34,9 +37,18 @@ export default function Profile({ navigation }) {
           title="Endereços"
           left={() => <List.Icon icon="map-marker" />}
         />
+        {isAdmin && (
+          <List.Item
+            title="Administração de Estoque"
+            description="Gerenciar itens e produtos"
+            left={() => <List.Icon icon="warehouse" />}
+            onPress={() => navigation.navigate("Stock")}
+          />
+        )}
         <List.Item
           title="Sair"
           left={() => <List.Icon icon="logout" />}
+          onPress={logout}
         />
       </List.Section>
     </Layout>
