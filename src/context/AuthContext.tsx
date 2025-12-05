@@ -16,7 +16,7 @@ const TOKEN_STORAGE_KEY = "token";
 
 type LoginCredentials = {
   email: string;
-  password: string;
+  senha: string;
 };
 
 type RegisterPayload = {
@@ -146,8 +146,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!authToken) {
         throw new Error("Token não recebido. Verifique suas credenciais.");
       }
+      const user: User = {id: credentials.email, email: credentials.email, name: credentials.email, roles: []}
       const nextUser = extractUser(data?.user);
-      await applySession(authToken, nextUser);
+      await applySession(authToken, user);
     } finally {
       setLoading(false);
     }

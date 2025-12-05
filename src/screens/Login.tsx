@@ -10,7 +10,7 @@ export default function Login({ navigation }) {
 
   async function handleLogin() {
   try {
-    await login({ email, password });
+    await login({ email, senha: password });
   } catch (e) {
     console.log("Falha no login", e);
   }

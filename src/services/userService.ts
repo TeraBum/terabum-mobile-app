@@ -3,7 +3,7 @@ import { User } from "../types/models";
 
 interface LoginCredentials {
   email: string;
-  password: string;
+  senha: string;
 }
 
 interface RegisterPayload {
@@ -13,11 +13,12 @@ interface RegisterPayload {
 }
 
 export const userService = {
-  login: async ({ email, password }: LoginCredentials) => {
-    const res = await api.post("/api/v1/Users/login", {
-      email,
-      password,
-      senha: password,
+  login: async ({ email, senha }: LoginCredentials) => {
+    console.log(email)
+    console.log(senha)
+    const res = await api.post("autenticacao/api/users/login", {
+      email: email,
+      senha: senha,
     });
     return res.data;
   },
